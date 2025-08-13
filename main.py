@@ -1,9 +1,9 @@
 # -----------------------------
 # Bot Configuration
 # -----------------------------
-API_ID = ""
-API_HASH = ""
-BOT_TOKEN = ""
+API_ID = 1234567 # Replace with your actual API_ID
+API_HASH = "your_api_hash_here" # Replace with your actual API_HASH
+BOT_TOKEN = "1234567890:ABCDEF..." #Replace with your actual BOT_TOKEN
 
 # -----------------------------
 # Imports
