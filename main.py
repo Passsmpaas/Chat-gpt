@@ -2,7 +2,7 @@ import os
 import subprocess
 from pyrogram import Client, filters
 
-API_ID = os.environ.get("API_ID", "api_id"))
+API_ID = os.environ.get("API_ID", "api_id")
 API_HASH = os.environ.get("API_HASH", "your_api_hash")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "your_bot_token")
 
