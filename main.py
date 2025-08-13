@@ -28,5 +28,8 @@ def run_bot():
 
 if __name__ == "__main__":
     Thread(target=run_flask).start()
-    run_bot()
     
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
+
+run_bot()
