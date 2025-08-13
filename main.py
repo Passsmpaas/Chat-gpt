@@ -1,16 +1,27 @@
+# -----------------------------
+# Bot Configuration
+# -----------------------------
+API_ID = "api_id"
+API_HASH = "api_hash"
+BOT_TOKEN = "bot_token"
+
+# -----------------------------
+# Imports
+# -----------------------------
 from pyrogram import Client, filters
 import asyncio
 import subprocess
 import os
 from urllib.parse import urlparse, parse_qs
-import re
 
 # -----------------------------
-# Bot setup
+# Bot Setup
 # -----------------------------
-app = Client("my_bot", bot_token="YOUR_BOT_TOKEN_HERE")
+app = Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
+# -----------------------------
 # /start command
+# -----------------------------
 @app.on_message(filters.command("start"))
 async def start(client, message):
     await message.reply_text(
@@ -21,7 +32,9 @@ async def start(client, message):
         "`https://example.com/video.m3u8 | MyLecture | mkv | 720p`"
     )
 
+# -----------------------------
 # Handle user sent links
+# -----------------------------
 @app.on_message(filters.text & ~filters.command("start"))
 async def download_mkv(client, message):
     try:
@@ -50,7 +63,7 @@ async def download_mkv(client, message):
             "-c", "copy",
             "-bsf:a", "aac_adtstoasc",
             output_file,
-            "-progress", "pipe:1",  # stdout progress
+            "-progress", "pipe:1",
             "-nostats"
         ]
 
@@ -69,9 +82,8 @@ async def download_mkv(client, message):
             line = line.decode('utf-8').strip()
             if "out_time_ms=" in line:
                 out_ms = int(line.split('=')[1])
-                # Convert to seconds
                 sec = out_ms / 1000000
-                # Optional: update message every few seconds
+                # Optional: update every few seconds
                 await sent.edit(f"🔹 Downloading {output_file} ... {sec:.0f}s processed")
 
         await process.wait()
@@ -90,6 +102,8 @@ async def download_mkv(client, message):
     except Exception as e:
         await message.reply_text(f"❌ Error: {e}")
 
+# -----------------------------
 # Run the bot
+# -----------------------------
 app.run()
-        
+    
