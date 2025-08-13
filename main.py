@@ -1,9 +1,9 @@
 # -----------------------------
 # Bot Configuration
 # -----------------------------
-API_ID = "api_id"
-API_HASH = "api_hash"
-BOT_TOKEN = "bot_token"
+API_ID = ""
+API_HASH = ""
+BOT_TOKEN = ""
 
 # -----------------------------
 # Imports
