@@ -1,3 +1,8 @@
 python-telegram-bot==20.3
 yt-dlp
 python-dotenv
+pyrogram
+tgcrypto
+m3u8
+requests
+beautifulsoup4
