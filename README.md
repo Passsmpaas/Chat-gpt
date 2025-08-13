@@ -1,7 +1,14 @@
 𝐌𝐫𝐒𝐭𝐫𝐚𝐧𝐠𝐞𝐫™❤️
-# m3u8 Telegram Downloader Bot
+# M3U8 Downloader Bot
 
-## Setup
-1. Rename `.env.example` to `.env`
-2. Put your Telegram bot token in `.env`
-3. Install dependencies:
+## Usage
+1. Send any signed `.m3u8` link (with `edge-cache-token`) to the bot.
+2. Bot will download it and send you an MP4.
+
+## Deploy on Render
+- Add Environment Variables:
+  - `API_ID`
+  - `API_HASH`
+  - `BOT_TOKEN`
+- Start Command:
+- 
