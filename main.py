@@ -1,35 +1,69 @@
 import os
-from flask import Flask
-from threading import Thread
-from pyrogram import Client
+import asyncio
+from pyrogram import Client, filters
+from pyrogram.types import Message
 
-API_ID = os.environ.get("API_ID", "api_id")
+# Environment variables
+API_ID = int(os.environ.get("API_ID", "123456"))
 API_HASH = os.environ.get("API_HASH", "your_api_hash")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "your_bot_token")
 
-app = Flask(__name__)
+# Create Pyrogram bot
+bot = Client(
+    "m3u8_downloader_bot",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN
+)
 
-@app.route('/')
-def home():
-    return "Bot is running!"
+# Download function
+async def download_m3u8(url: str, output: str):
+    cmd = [
+        "ffmpeg",
+        "-i", url,
+        "-c", "copy",
+        "-bsf:a", "aac_adtstoasc",
+        output
+    ]
+    process = await asyncio.create_subprocess_exec(
+        *cmd,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
+    await process.communicate()
+    return os.path.exists(output)
 
-def run_flask():
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+# /start command
+@bot.on_message(filters.command("start") & filters.private)
+async def start_handler(client: Client, message: Message):
+    await message.reply_text(
+        "👋 नमस्ते!\n\n"
+        "मुझे कोई भी signed `.m3u8` लिंक `/upload LINK` के साथ भेजें,\n"
+        "मैं उसे डाउनलोड करके आपको वीडियो भेज दूँगा।\n\n"
+        "उदाहरण:\n`/upload https://example.com/master.m3u8`"
+    )
 
-def run_bot():
-    bot = Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+# /upload command
+@bot.on_message(filters.command("upload") & filters.private)
+async def upload_handler(client: Client, message: Message):
+    if len(message.command) < 2:
+        await message.reply_text("❌ कृपया एक m3u8 लिंक दें!\n\nउदाहरण:\n`/upload https://example.com/master.m3u8`")
+        return
 
-    @bot.on_message()
-    async def handler(client, message):
-        await message.reply_text("Hello! Bot is working on Render.")
+    url = message.command[1]
+    filename = "video.mp4"
 
-    bot.run()
+    status_msg = await message.reply_text("📥 Download शुरू हो रहा है...")
 
-if __name__ == "__main__":
-    Thread(target=run_flask).start()
-    
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host='0.0.0.0', port=port)
+    success = await download_m3u8(url, filename)
 
-run_bot()
+    if success:
+        await status_msg.edit("✅ Download पूरा! Upload हो रहा है...")
+        await message.reply_video(filename, caption="🎥 यह रहा आपका वीडियो!")
+        os.remove(filename)
+    else:
+        await status_msg.edit("❌ Download विफल हुआ, कृपया लिंक चेक करें।")
+
+print("🚀 Bot Started...")
+bot.run()
+        
